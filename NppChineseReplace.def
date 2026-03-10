@@ -1,0 +1,8 @@
+LIBRARY NppChineseReplace
+EXPORTS
+    setInfo
+    getName
+    getFuncsArray
+    beNotified
+    messageProc
+    isUnicode
