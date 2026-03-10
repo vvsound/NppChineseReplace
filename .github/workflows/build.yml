@@ -1,0 +1,24 @@
+name: Build DLL
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build DLL
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cl.exe /LD /O2 /EHsc /utf-8 /Fe:NppChineseReplace.dll NppChineseReplace.cpp /link /DEF:NppChineseReplace.def
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: NppChineseReplace
+          path: NppChineseReplace.dll
