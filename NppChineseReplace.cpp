@@ -15,6 +15,7 @@
 #define SCI_GETANCHOR            2009
 #define SCI_GETFIRSTVISIBLELINE  2152
 #define SCI_GETXOFFSET           2398
+#define SCI_GOTOPOS              2025
 #define SCI_SETSEL               2160
 #define SCI_LINESCROLL           2300
 #define SCI_SETXOFFSET           2397
@@ -203,13 +204,18 @@ void CmdReplaceAll() {
     SendMessage(sci, SCI_SETTEXT, 0, (LPARAM)u8.c_str());
     SendMessage(sci, SCI_ENDUNDOACTION, 0, 0);
 
-    // 恢复光标和滚动位置（在 undo 块之外）
+    // 先把光标移到文档开头，防止 Scintilla 自动滚动到旧光标位置
+    SendMessage(sci, SCI_GOTOPOS, 0, 0);
+
+    // 恢复滚动位置
+    SendMessage(sci, SCI_LINESCROLL, 0, firstLine - (int)SendMessage(sci, SCI_GETFIRSTVISIBLELINE, 0, 0));
+    SendMessage(sci, SCI_SETXOFFSET, xOffset, 0);
+
+    // 最后恢复光标（恢复后视图不再跳动，因为滚动已经锁定）
     int newLen = (int)SendMessage(sci, SCI_GETLENGTH, 0, 0);
     if (curPos    > newLen) curPos    = newLen;
     if (anchorPos > newLen) anchorPos = newLen;
-    SendMessage(sci, SCI_SETSEL,     (WPARAM)anchorPos, (LPARAM)curPos);
-    SendMessage(sci, SCI_LINESCROLL, 0, firstLine - (int)SendMessage(sci, SCI_GETFIRSTVISIBLELINE, 0, 0));
-    SendMessage(sci, SCI_SETXOFFSET, xOffset, 0);
+    SendMessage(sci, SCI_SETSEL, (WPARAM)anchorPos, (LPARAM)curPos);
 }
 
 void CmdOpenRules() {
