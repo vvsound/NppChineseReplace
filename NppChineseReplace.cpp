@@ -18,6 +18,7 @@
 #define SCI_SETSEL               2160
 #define SCI_LINESCROLL           2300
 #define SCI_SETXOFFSET           2397
+#define SCI_SETFIRSTVISIBLELINE  2613
 #define NPPMSG                   (WM_USER + 1000)
 #define NPPM_GETCURRENTSCINTILLA (NPPMSG + 4)
 
@@ -206,9 +207,9 @@ void CmdReplaceAll() {
     int newLen = (int)SendMessage(sci, SCI_GETLENGTH, 0, 0);
     if (curPos    > newLen) curPos    = newLen;
     if (anchorPos > newLen) anchorPos = newLen;
-    SendMessage(sci, SCI_SETSEL,     (WPARAM)anchorPos, (LPARAM)curPos);
-    SendMessage(sci, SCI_LINESCROLL, 0, firstLine - (int)SendMessage(sci, SCI_GETFIRSTVISIBLELINE, 0, 0));
-    SendMessage(sci, SCI_SETXOFFSET, xOffset, 0);
+    SendMessage(sci, SCI_SETSEL,               (WPARAM)anchorPos, (LPARAM)curPos);
+    SendMessage(sci, SCI_SETFIRSTVISIBLELINE,  (WPARAM)firstLine, 0);
+    SendMessage(sci, SCI_SETXOFFSET,           (WPARAM)xOffset,   0);
 
     SendMessage(sci, SCI_ENDUNDOACTION, 0, 0);
 }
