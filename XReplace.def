@@ -1,0 +1,8 @@
+LIBRARY XReplace
+EXPORTS
+    setInfo
+    getName
+    getFuncsArray
+    beNotified
+    messageProc
+    isUnicode
